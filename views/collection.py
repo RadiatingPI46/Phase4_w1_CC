@@ -12,12 +12,12 @@ def add_collection():
     data = request.get_json()
     current_user_id = get_jwt_identity()
 
-    name_of_collection = data['name_of_collection']
+    name_of_item = data['name_of_item']
     item_type = data['item_type']
     item_price = data['item_price']
     item_description = data['item_description']
 
-    new_collection = Collection(name_of_collection=name_of_collection, item_type=item_type, item_price=item_price, item_description=item_description,user_id=current_user_id,)
+    new_collection = Collection(name_of_item=name_of_item, item_type=item_type, item_price=item_price, item_description=item_description,user_id=current_user_id,)
     db.session.add(new_collection)
     db.session.commit()
     return jsonify({"success":"Collection added successfully"})
@@ -35,13 +35,13 @@ def update_collection(collection_id):
 
     if collection and collection.user_id==current_user_id:
 
-        name_of_collection = data.get('name_of_collection', collection.name_of_collection)
+        name_of_item = data.get('name_of_item', collection.name_of_item)
         item_type = data.get('item_type', collection.item_type)
         item_price=data.get('item_price', collection.item_price)
         item_description = data.get('item_description',collection.item_description)
 
         # Apply updates
-        collection.name_of_collection = name_of_collection
+        collection.name_of_item = name_of_item
         collection.item_type = item_type
         collection.item_price = item_price
         collection.item_description = item_description

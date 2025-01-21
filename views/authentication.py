@@ -3,6 +3,8 @@ from models import db, User, TokenBlocklist
 from werkzeug.security import check_password_hash
 from datetime import datetime, timezone, timedelta
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from app import app, mail
+from flask_mail import Message
 
 auth_bp= Blueprint("auth_bp", __name__)
 
@@ -18,7 +20,21 @@ def login():
 
     if user and check_password_hash(user.password, password ) :
         access_token = create_access_token(identity=user.id)
-        return jsonify({"access_token": access_token}), 200
+        print(access_token)
+        try:
+            msg = Message(
+                subject="Welcome to the Collections App",
+                sender=app.config["MAIL_DEFAULT_SENDER"],
+                recipients=[email],
+                body=f"Your token is {access_token}"
+
+            )
+            mail.send(msg)
+            return jsonify({"access_token": access_token}), 200
+        except Exception as e:
+            return "Failed to send email"
+    
+
 
     else:
         return jsonify({"error": "Either email/password is incorrect"})
